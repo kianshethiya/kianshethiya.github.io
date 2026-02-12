@@ -20,7 +20,7 @@ Touch-based LED mode controller using:
 
 ## Pin Layout
 
-![LED Controller Schematic](./docs/diagram)
+![LED Controller Schematic](./docs/diagram.jpg)
 
 ## Modes
 
