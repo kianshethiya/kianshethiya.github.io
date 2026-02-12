@@ -1,40 +1,577 @@
-# Arduino Touch LCD Controller
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arduino LED Controller - README</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&amp;family=Poppins:wght@600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-Touch-based LED mode controller using:
-- Arduino Uno
-- Pushbutton
-- 16x2 I2C LCD
-- Red LED
-- Green LED
-- Blue LED
-- Yellow LED
-- 220 ohms resistor
+    html, body {
+      height: 100%;
+    }
 
-## Features
+    body {
+      font-family: 'Fira Code', monospace;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0f172a 100%);
+      color: #c9d1d9;
+      line-height: 1.7;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-- Touch cycles through modes
-- LCD displays active mode
-- Simple fade loop
-- All ON / All OFF
-- Vacuum Tube display message
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
 
-## Pin Layout
+    .page-wrapper {
+      height: 100%;
+      width: 100%;
+      overflow-auto;
+      position: relative;
+      z-index: 1;
+    }
 
-<p align="center">
-  <img src="docs/diagram.jpg" width="600">
-</p>
+    .readme-container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 64px 32px;
+    }
 
-## Modes
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #58a6ff 0%, #79c0ff 50%, #79c0ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -1px;
+      animation: slideInDown 0.8s ease-out;
+    }
 
-1. Red Toggle  
-2. Blue Toggle  
-3. Green Toggle  
-4. All On  
-5. All Off  
-6. Fade Loop Simple  
-7. Stop Loop  
-8. Vacuum Tube Display  
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-## License
+    h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      margin-top: 48px;
+      margin-bottom: 24px;
+      color: #58a6ff;
+      padding-bottom: 12px;
+      border-bottom: 2px solid rgba(88, 166, 255, 0.3);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideInLeft 0.6s ease-out;
+    }
 
-MIT
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 28px;
+      margin-bottom: 16px;
+      color: #79c0ff;
+    }
+
+    p {
+      margin-bottom: 16px;
+      color: #8b949e;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    p strong {
+      color: #c9d1d9;
+    }
+
+    ul, ol {
+      margin: 20px 0;
+      padding-left: 32px;
+      color: #8b949e;
+    }
+
+    li {
+      margin-bottom: 12px;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    code {
+      background: rgba(30, 30, 30, 0.8);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      color: #79c0ff;
+    }
+
+    pre {
+      background: linear-gradient(135deg, rgba(13, 17, 23, 0.8) 0%, rgba(22, 27, 34, 0.8) 100%);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+      overflow-x: auto;
+      margin: 24px 0;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    pre code {
+      background: none;
+      color: #c9d1d9;
+      padding: 0;
+      border: none;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 24px 0;
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    th, td {
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      padding: 16px;
+      text-align: left;
+    }
+
+    th {
+      background: linear-gradient(90deg, rgba(88, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      font-weight: 600;
+      color: #58a6ff;
+    }
+
+    tr:hover {
+      background: rgba(88, 166, 255, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #79c0ff;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .badge:hover {
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      border-color: rgba(88, 166, 255, 0.5);
+      transform: translateY(-2px);
+    }
+
+    .feature-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .feature-list li {
+      padding-left: 32px;
+      position: relative;
+      margin-bottom: 14px;
+      background: linear-gradient(90deg, rgba(88, 166, 255, 0.05) 0%, transparent 100%);
+      padding: 12px;
+      padding-left: 40px;
+      border-radius: 8px;
+      border-left: 3px solid #79c0ff;
+      transition: all 0.3s ease;
+    }
+
+    .feature-list li:hover {
+      background: linear-gradient(90deg, rgba(88, 166, 255, 0.1) 0%, transparent 100%);
+      transform: translateX(4px);
+    }
+
+    .feature-list li:before {
+      content: "✓";
+      position: absolute;
+      left: 12px;
+      color: #79c0ff;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    blockquote {
+      border-left: 4px solid #79c0ff;
+      padding-left: 20px;
+      margin: 24px 0;
+      color: #8b949e;
+      font-style: italic;
+      background: rgba(88, 166, 255, 0.05);
+      padding: 16px 20px;
+      border-radius: 6px;
+    }
+
+    .divider {
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(88, 166, 255, 0.3) 50%, transparent 100%);
+      margin: 48px 0;
+    }
+
+    a {
+      color: #58a6ff;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: #79c0ff;
+      text-decoration: underline;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0 32px 0;
+      flex-wrap: wrap;
+      animation: fadeIn 0.8s ease-out 0.2s backwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .toc {
+      background: linear-gradient(135deg, rgba(88, 166, 255, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .toc li {
+      margin-bottom: 10px;
+    }
+
+    .toc a {
+      color: #79c0ff;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toc a:hover {
+      color: #58a6ff;
+      transform: translateX(4px);
+    }
+
+    .footer-section {
+      color: #8b949e;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(88, 166, 255, 0.2);
+    }
+
+    .footer-section strong {
+      color: #c9d1d9;
+    }
+
+    .code-section {
+      background: linear-gradient(135deg, rgba(13, 17, 23, 0.9) 0%, rgba(22, 27, 34, 0.9) 100%);
+      border: 1px solid rgba(88, 166, 255, 0.2);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 24px 0;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .intro-text {
+      font-size: 18px;
+      color: #8b949e;
+      margin-bottom: 32px;
+      line-height: 1.9;
+      animation: fadeIn 0.8s ease-out 0.3s backwards;
+    }
+
+    .intro-text strong {
+      color: #79c0ff;
+    }
+
+    ol {
+      list-style-position: inside;
+    }
+
+    ol li {
+      margin-left: 8px;
+    }
+
+    .glow {
+      text-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="page-wrapper">
+   <div class="readme-container">
+    <h1>⚡ Arduino Touch LCD Controller</h1>
+    <div class="header-info"><span class="badge">🎛️ Arduino Uno</span> <span class="badge">💡 LED Control</span> <span class="badge">🖥️ I2C LCD</span> <span class="badge">👆 Touch Input</span>
+    </div>
+    <p class="intro-text"><strong>A stunning touch-based LED mode controller featuring Arduino Uno, 16x2 I2C LCD display, and 4 RGB+Yellow LEDs. Perfect for learning Arduino programming, I2C communication, and creating interactive hardware interfaces!</strong></p>
+    <h2>📚 Table of Contents</h2>
+    <div class="toc">
+     <ul>
+      <li>📖 <a href="#overview">Overview</a></li>
+      <li>🔧 <a href="#components">Components</a></li>
+      <li>✨ <a href="#features">Features</a></li>
+      <li>📌 <a href="#pin-layout">Pin Layout</a></li>
+      <li>🔆 <a href="#modes">Control Modes</a></li>
+      <li>⚙️ <a href="#installation">Installation</a></li>
+      <li>💡 <a href="#usage">Usage</a></li>
+      <li>📄 <a href="#license">License</a></li>
+     </ul>
+    </div>
+    <h2 id="overview">📖 Overview</h2>
+    <p>This project is a versatile LED controller that uses capacitive touch input to cycle through different lighting modes. The 16x2 I2C LCD display shows the currently active mode in real-time, providing intuitive feedback to the user.</p>
+    <p>Whether you're a beginner learning Arduino or an experienced maker, this project demonstrates key concepts like I2C communication, PWM LED control, interrupt handling, and elegant state management.</p>
+    <h2 id="components">🔧 Components</h2>
+    <table>
+     <thead>
+      <tr>
+       <th>Component</th>
+       <th>Quantity</th>
+       <th>Notes</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>Arduino Uno</td>
+       <td>1</td>
+       <td>Microcontroller board</td>
+      </tr>
+      <tr>
+       <td>16x2 I2C LCD Display</td>
+       <td>1</td>
+       <td>With I2C backpack (0x27 address)</td>
+      </tr>
+      <tr>
+       <td>Pushbutton / Touch Sensor</td>
+       <td>1</td>
+       <td>For mode cycling</td>
+      </tr>
+      <tr>
+       <td>Red LED</td>
+       <td>1</td>
+       <td>5mm standard LED</td>
+      </tr>
+      <tr>
+       <td>Green LED</td>
+       <td>1</td>
+       <td>5mm standard LED</td>
+      </tr>
+      <tr>
+       <td>Blue LED</td>
+       <td>1</td>
+       <td>5mm standard LED</td>
+      </tr>
+      <tr>
+       <td>Yellow LED</td>
+       <td>1</td>
+       <td>5mm standard LED</td>
+      </tr>
+      <tr>
+       <td>220Ω Resistor</td>
+       <td>5</td>
+       <td>Current limiting for LEDs &amp; button</td>
+      </tr>
+      <tr>
+       <td>Breadboard &amp; Jumper Wires</td>
+       <td>1 set</td>
+       <td>For connections</td>
+      </tr>
+     </tbody>
+    </table>
+    <h2 id="features">✨ Features</h2>
+    <ul class="feature-list">
+     <li>Touch-based mode cycling with visual feedback</li>
+     <li>Real-time LCD display updates showing active mode</li>
+     <li>8 different LED control modes</li>
+     <li>PWM-based smooth fade effects</li>
+     <li>I2C communication protocol for LCD</li>
+     <li>Clean, well-documented Arduino code</li>
+     <li>Easy to extend with additional modes</li>
+     <li>Low power consumption</li>
+    </ul>
+    <h2 id="pin-layout">📌 Pin Layout</h2>
+    <h3>Arduino Uno Pin Configuration</h3>
+    <div class="code-section">
+     <pre><code>Digital Pins:
+  D2  → Touch Button Input (with 220Ω pulldown)
+  D3  → Red LED (PWM)
+  D5  → Blue LED (PWM)
+  D6  → Green LED (PWM)
+  D9  → Yellow LED (PWM)
+
+I2C Pins (LCD):
+  A4  → SDA (I2C Data)
+  A5  → SCL (I2C Clock)
+
+Power:
+  5V  → Power Supply
+  GND → Ground</code></pre>
+    </div>
+    <h2 id="modes">🔆 Control Modes</h2>
+    <p>Press the touch button to cycle through the following modes:</p>
+    <ol style="line-height: 2;">
+     <li><strong>Red Toggle</strong> - Toggle red LED on/off</li>
+     <li><strong>Blue Toggle</strong> - Toggle blue LED on/off</li>
+     <li><strong>Green Toggle</strong> - Toggle green LED on/off</li>
+     <li><strong>All On</strong> - Turn all LEDs on at full brightness</li>
+     <li><strong>All Off</strong> - Turn all LEDs off</li>
+     <li><strong>Fade Loop</strong> - Simple fade effect cycling through all LEDs</li>
+     <li><strong>Stop Loop</strong> - Stop the fade animation</li>
+     <li><strong>Vacuum Tube Display</strong> - Retro display message on LCD</li>
+    </ol>
+    <h2 id="installation">⚙️ Installation</h2>
+    <h3>1. Install Required Libraries</h3>
+    <p>Open Arduino IDE and install the following libraries via <code>Sketch → Include Library → Manage Libraries</code>:</p>
+    <ul>
+     <li><strong>Wire</strong> - Built-in (for I2C communication)</li>
+     <li><strong>LiquidCrystal_I2C</strong> - by Frank de Brabander</li>
+    </ul>
+    <h3>2. Hardware Setup</h3>
+    <ol>
+     <li>Connect the LCD to Arduino I2C pins (A4 = SDA, A5 = SCL)</li>
+     <li>Connect LEDs to digital pins D3, D5, D6, D9 with 220Ω resistors</li>
+     <li>Connect touch button to D2 with 220Ω pulldown resistor</li>
+     <li>Connect power and ground appropriately</li>
+    </ol>
+    <h3>3. Upload Code</h3>
+    <p>Copy the provided Arduino sketch to the IDE and upload to your Arduino Uno.</p>
+    <h2 id="usage">💡 Usage</h2>
+    <h3>Basic Operation</h3>
+    <ul>
+     <li>Press the touch button to cycle through LED modes</li>
+     <li>The current mode displays on the 16x2 LCD</li>
+     <li>LEDs respond immediately based on the selected mode</li>
+    </ul>
+    <h3>Extending the Project</h3>
+    <p>Want to add more modes? The code is structured to make it easy:</p>
+    <ul>
+     <li>Add new mode cases in the <code>updateLEDs()</code> function</li>
+     <li>Create new LED control patterns</li>
+     <li>Modify the fade speed or animation effects</li>
+    </ul>
+    <blockquote>
+     💡 <strong>Pro tip:</strong> Use PWM pins (3, 5, 6, 9, 10, 11) for smooth fading effects with <code>analogWrite()</code>
+    </blockquote>
+    <h2 id="license">📄 License</h2>
+    <p>This project is released under the <strong>MIT License</strong>. You are free to use, modify, and distribute this code for both personal and commercial projects.</p>
+    <div class="divider"></div>
+    <div class="footer-section">
+     <p>Made with ❤️ for Arduino enthusiasts</p>
+     <p style="margin-top: 12px;"><strong id="author-display">Author: Your Name</strong></p>
+     <p style="margin-top: 12px;"><a href="#" id="repo-link">→ View on GitHub</a></p>
+     <p style="margin-top: 24px; color: #6e7681;">Built with Canva Code ⚡</p>
+    </div>
+   </div>
+  </div>
+  <script>
+    let config = {
+      repo_url: 'https://github.com',
+      author_name: 'Your Name'
+    };
+
+    const defaultConfig = { ...config };
+
+    async function initSDK() {
+      if (!window.elementSdk) return;
+
+      await window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = newConfig;
+          document.getElementById('author-display').textContent = `Author: ${config.author_name || defaultConfig.author_name}`;
+          document.getElementById('repo-link').href = config.repo_url || defaultConfig.repo_url;
+        },
+        mapToCapabilities: () => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: () => new Map([
+          ['repo_url', config.repo_url || defaultConfig.repo_url],
+          ['author_name', config.author_name || defaultConfig.author_name]
+        ])
+      });
+    }
+
+    initSDK();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cccf4e017012e52',t:'MTc3MDkwODQzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
